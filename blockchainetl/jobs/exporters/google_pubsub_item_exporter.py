@@ -77,7 +77,14 @@ class GooglePubSubItemExporter:
             data = json.dumps(item).encode('utf-8')
 
             ordering_key = 'all' if self.enable_message_ordering else ''
-            message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key, **self.get_message_attributes(item))
+            
+            if item["type"] == 'transaction':
+                message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key, **{"to_address":str(item['to_address']),"from_address":str(item['from_address'])})
+            elif item["type"] == 'token_transfer':
+                message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key,**{"to_address":str(item['to_address']),"from_address":str(item['from_address'])})
+            else:
+                message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key,**self.get_message_attributes(item))
+            
             return message_future
         else:
             logging.warning('Topic for item type "{}" is not configured.'.format(item_type))
