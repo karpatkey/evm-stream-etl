@@ -82,6 +82,10 @@ class GooglePubSubItemExporter:
                 message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key, **{"to_address":str(item['to_address']),"from_address":str(item['from_address'])})
             elif item["type"] == 'token_transfer':
                 message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key,**{"to_address":str(item['to_address']),"from_address":str(item['from_address'])})
+            elif item["type"] == 'traces':
+                message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key,**{"to_address":str(item['to_address']),"from_address":str(item['from_address'])})
+            
+            
             else:
                 message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key,**self.get_message_attributes(item))
             
