@@ -1,0 +1,26 @@
+name: Docker Build push
+
+on: 
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+env:
+  GIT_REF: ${{ github.head_ref || github.ref_name }}
+  DOCKER_REGISTRY: ${{ secrets.DOCKER_URL }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+jobs:
+  docker:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build and push
+        run: ./.github/scripts/build_and_push.sh
+        env:
+          DOCKER_IMAGE_NAME: "registry.digitalocean.com/karpatkey/evm_stream_etl"
+          DOCKERFILE: "./Dockerfile"
