@@ -50,7 +50,7 @@ class EthInternalTransactionMapper(object):
         internal_transaction.trace_type = trace_type
 
         # common fields in call/create
-        if trace_type in ('call') and trace_value>0:
+        if trace_type == 'call' and trace_value>0:
             internal_transaction.value = trace_value
             return internal_transaction
         
