@@ -48,7 +48,7 @@ class EthInternalTransactionMapper(object):
         trace_value = int(result.get('value'),16)
         internal_transaction.trace_type = trace_type
         # common fields in call/create
-        if trace_type == 'call' and trace_value>0:
+        if trace_type == 'CALL' and trace_value>0:
             internal_transaction.value = trace_value
             internal_transaction.from_address = result.get('from')
             internal_transaction.to_address = result.get('to')
