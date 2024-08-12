@@ -57,20 +57,20 @@ class EthInternalTransactionMapper(object):
         else: 
             return None
 
-    def geth_trace_to_traces(self, geth_trace):
-        block_number = geth_trace.block_number
-        transaction_traces = geth_trace.transaction_traces
+    # def geth_trace_to_traces(self, geth_trace):
+    #     block_number = geth_trace.block_number
+    #     transaction_traces = geth_trace.transaction_traces
 
-        traces = []
+    #     traces = []
 
-        for tx_index, tx_trace in enumerate(transaction_traces):
-            traces.extend(self._iterate_transaction_trace(
-                block_number,
-                tx_index,
-                tx_trace,
-            ))
+    #     for tx_index, tx_trace in enumerate(transaction_traces):
+    #         traces.extend(self._iterate_transaction_trace(
+    #             block_number,
+    #             tx_index,
+    #             tx_trace,
+    #         ))
 
-        return traces
+    #     return traces
 
     # def genesis_alloc_to_trace(self, allocation):
     #     address = allocation[0]
@@ -102,50 +102,50 @@ class EthInternalTransactionMapper(object):
 
     #     return trace
 
-    def _iterate_transaction_trace(self, block_number, tx_index, tx_trace, trace_address=[]):
-        trace = EthTrace()
+    # def _iterate_transaction_trace(self, block_number, tx_index, tx_trace, trace_address=[]):
+    #     trace = EthTrace()
 
-        trace.block_number = block_number
-        trace.transaction_index = tx_index
+    #     trace.block_number = block_number
+    #     trace.transaction_index = tx_index
 
-        trace.from_address = to_normalized_address(tx_trace.get('from'))
-        trace.to_address = to_normalized_address(tx_trace.get('to'))
+    #     trace.from_address = to_normalized_address(tx_trace.get('from'))
+    #     trace.to_address = to_normalized_address(tx_trace.get('to'))
 
-        trace.input = tx_trace.get('input')
-        trace.output = tx_trace.get('output')
+    #     trace.input = tx_trace.get('input')
+    #     trace.output = tx_trace.get('output')
 
-        trace.value = hex_to_dec(tx_trace.get('value'))
-        trace.gas = hex_to_dec(tx_trace.get('gas'))
-        trace.gas_used = hex_to_dec(tx_trace.get('gasUsed'))
+    #     trace.value = hex_to_dec(tx_trace.get('value'))
+    #     trace.gas = hex_to_dec(tx_trace.get('gas'))
+    #     trace.gas_used = hex_to_dec(tx_trace.get('gasUsed'))
 
-        trace.error = tx_trace.get('error')
+    #     trace.error = tx_trace.get('error')
 
-        # lowercase for compatibility with parity traces
-        trace.trace_type = tx_trace.get('type').lower()
+    #     # lowercase for compatibility with parity traces
+    #     trace.trace_type = tx_trace.get('type').lower()
 
-        if trace.trace_type == 'selfdestruct':
-            # rename to suicide for compatibility with parity traces
-            trace.trace_type = 'suicide'
-        elif trace.trace_type in ('call', 'callcode', 'delegatecall', 'staticcall'):
-            trace.call_type = trace.trace_type
-            trace.trace_type = 'call'
+    #     if trace.trace_type == 'selfdestruct':
+    #         # rename to suicide for compatibility with parity traces
+    #         trace.trace_type = 'suicide'
+    #     elif trace.trace_type in ('call', 'callcode', 'delegatecall', 'staticcall'):
+    #         trace.call_type = trace.trace_type
+    #         trace.trace_type = 'call'
 
-        result = [trace]
+    #     result = [trace]
 
-        calls = tx_trace.get('calls', [])
+    #     calls = tx_trace.get('calls', [])
 
-        trace.subtraces = len(calls)
-        trace.trace_address = trace_address
+    #     trace.subtraces = len(calls)
+    #     trace.trace_address = trace_address
 
-        for call_index, call_trace in enumerate(calls):
-            result.extend(self._iterate_transaction_trace(
-                block_number,
-                tx_index,
-                call_trace,
-                trace_address + [call_index]
-            ))
+    #     for call_index, call_trace in enumerate(calls):
+    #         result.extend(self._iterate_transaction_trace(
+    #             block_number,
+    #             tx_index,
+    #             call_trace,
+    #             trace_address + [call_index]
+    #         ))
 
-        return result
+    #     return result
 
     def internal_transaction_to_dict(self, internal_transaction):
         return {
