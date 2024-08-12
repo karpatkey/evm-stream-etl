@@ -69,7 +69,6 @@ class ExportInternalTransactionsJob(BaseJob):
         )
 
     def _export_batch(self, block_number_batch):
-        print('here bro')
         assert len(block_number_batch) == 1
         block_number = block_number_batch[0]
 
@@ -88,12 +87,15 @@ class ExportInternalTransactionsJob(BaseJob):
         # json_traces = self.web3.parity.traceBlock(block_number)
         
         # debug trace block by number call to the node, tested and available for nodes. 
-        json_traces = self.web3.provider.make_request("debug_traceBlockByNumber", [block_number, {"tracer": "callTracer"}])['result'] #ByNumber
+        block = hex(block_number)
+
+        #ByNumber
+        json_traces = self.web3.provider.make_request("debug_traceBlockByNumber", [block, {"tracer": "callTracer"}])['result'] 
 
         if json_traces is None:
             raise ValueError('Response from the node is None. Is the node fully synced? Is the node started with tracing enabled? Is trace_block API enabled?')
 
-        traces = [self.internal_transction_mapper.json_dict_to_trace(json_trace) for json_trace in json_traces]
+        traces = [self.internal_transction_mapper.json_dict_to_internal_transaction(json_trace) for json_trace in json_traces]
         #filter none values (traces but not internal transactions)
         traces = [trace for trace in traces if trace is not None]
         all_traces.extend(traces)
