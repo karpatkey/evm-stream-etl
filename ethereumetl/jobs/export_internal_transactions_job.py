@@ -50,9 +50,10 @@ class ExportInternalTransactionsJob(BaseJob):
 
         self.batch_work_executor = BatchWorkExecutor(1, max_workers)
         self.item_exporter = item_exporter
-        #TODO Migrate Trace Mapper 
+        
         self.internal_transction_mapper = EthInternalTransactionMapper()
 
+        #TODO Migrate this special case of grnesis and daofork traces: 
         self.special_trace_service = EthSpecialTraceService()
         self.include_genesis_traces = include_genesis_traces
         self.include_daofork_traces = include_daofork_traces
