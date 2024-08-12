@@ -90,7 +90,7 @@ class ExportInternalTransactionsJob(BaseJob):
         block = hex(block_number)
 
         #ByNumber
-        json_traces = self.web3.provider.make_request("debug_traceBlockByNumber", [block, {"tracer": "callTracer"}])['result'] 
+        json_traces = self.web3.provider.make_request("debug_traceBlockByNumber", [block, {"tracer": "callTracer"}]).get('result')
 
         if json_traces is None:
             raise ValueError('Response from the node is None. Is the node fully synced? Is the node started with tracing enabled? Is trace_block API enabled?')
