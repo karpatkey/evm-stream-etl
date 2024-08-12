@@ -28,7 +28,6 @@ from ethereumetl.utils import hex_to_dec, to_normalized_address
 
 class EthInternalTransactionMapper(object):
     def json_dict_to_internal_transaction(self, json_dict):
-        
         internal_transaction = ETHInternalTransaction()
         
         internal_transaction.block_number = json_dict.get('blockNumber')
@@ -45,13 +44,14 @@ class EthInternalTransactionMapper(object):
         if result is None:
             result = {}
 
-        trace_type = json_dict.get('type')
-        trace_value = json_dict.get('value')
+        trace_type = result.get('type')
+        trace_value = int(result.get('value'),16)
         internal_transaction.trace_type = trace_type
-
         # common fields in call/create
         if trace_type == 'call' and trace_value>0:
             internal_transaction.value = trace_value
+            internal_transaction.from_address = result.get('from')
+            internal_transaction.to_address = result.get('to')
             return internal_transaction
         
         else: 
