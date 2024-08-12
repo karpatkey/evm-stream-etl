@@ -99,7 +99,7 @@ class ExportInternalTransactionsJob(BaseJob):
 
         # calculate_trace_statuses(all_traces)
         # calculate_trace_ids(all_traces)
-        # calculate_trace_indexes(all_traces)
+        calculate_interna_transaction_indexes(all_traces)
 
         for trace in all_traces:
             self.item_exporter.export_item(self.internal_transction_mapper.internal_transaction_to_dict(trace))
@@ -109,7 +109,7 @@ class ExportInternalTransactionsJob(BaseJob):
         self.item_exporter.close()
 
 
-def calculate_trace_indexes(traces):
+def calculate_interna_transaction_indexes(internal_transactions):
     # Only works if traces were originally ordered correctly which is the case for Parity traces
-    for ind, trace in enumerate(traces):
-        trace.trace_index = ind
+    for ind, internal_transaction in enumerate(internal_transactions):
+        internal_transaction.index = ind

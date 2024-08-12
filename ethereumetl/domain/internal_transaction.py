@@ -31,3 +31,4 @@ class ETHInternalTransaction(object):
         self.trace_type = None
         self.error = None
         self.status = None
+        self.index = None

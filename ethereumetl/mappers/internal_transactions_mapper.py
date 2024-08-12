@@ -66,6 +66,7 @@ class EthInternalTransactionMapper(object):
             'from_address': internal_transaction.from_address,
             'to_address': internal_transaction.to_address,
             'value': internal_transaction.value,
+            'index':internal_transaction.index
         }
 
 
