@@ -69,6 +69,7 @@ class ExportInternalTransactionsJob(BaseJob):
         )
 
     def _export_batch(self, block_number_batch):
+        print('here bro')
         assert len(block_number_batch) == 1
         block_number = block_number_batch[0]
 
