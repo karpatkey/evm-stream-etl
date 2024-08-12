@@ -49,6 +49,8 @@ class EthStreamerAdapter:
         return int(w3.eth.getBlock("latest").number)
 
     def export_all(self, start_block, end_block):
+        print('que onda')
+        print(self.entity_types)
         # Export blocks and transactions
         blocks, transactions = [], []
         if self._should_export(EntityType.BLOCK) or self._should_export(EntityType.TRANSACTION):
@@ -68,6 +70,12 @@ class EthStreamerAdapter:
         traces = []
         if self._should_export(EntityType.TRACE):
             traces = self._export_traces(start_block, end_block)
+
+
+        # Export internal transactions
+        internal_transactions = []
+        if self._should_export(EntityType.INTERNAL_TRANSACTION):
+            internal_transactions = self._export_internal_transactions(start_block, end_block)
 
         # Export contracts
         contracts = []
