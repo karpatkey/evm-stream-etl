@@ -214,6 +214,9 @@ class EthStreamerAdapter:
 
         if entity_type == EntityType.TOKEN:
             return EntityType.TOKEN in self.entity_types
+        
+        if entity_type == EntityType.INTERNAL_TRANSACTION:
+            return EntityType.INTERNAL_TRANSACTION in self.entity_types
 
         raise ValueError('Unexpected entity type ' + entity_type)
 
