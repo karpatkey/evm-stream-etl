@@ -47,7 +47,7 @@ def create_item_exporter(output):
                 'trace': output + '.traces',
                 'contract': output + '.contracts',
                 'token': output + '.tokens',
-                'internal_transaction': output + '.internal_transaction',
+                'internal_transaction': output + '.internal_transactions',
             },
             message_attributes=('item_id', 'item_timestamp'),
             batch_max_bytes=1024 * 1024 * 5,
