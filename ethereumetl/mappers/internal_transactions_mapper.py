@@ -60,7 +60,7 @@ class EthInternalTransactionMapper(object):
     def internal_transaction_to_dict(self, internal_transaction):
         return {
             
-            'type': 'trace',
+            'type': 'internal_transaction',
             'block_number': internal_transaction.block_number,
             'transaction_hash': internal_transaction.transaction_hash,
             'from_address': internal_transaction.from_address,
