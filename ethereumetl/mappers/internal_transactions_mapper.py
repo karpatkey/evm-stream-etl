@@ -31,7 +31,7 @@ class EthInternalTransactionMapper(object):
         internal_transaction = ETHInternalTransaction()
         
         internal_transaction.block_number = json_dict.get('blockNumber')
-        internal_transaction.transaction_hash = json_dict.get('transactionHash')
+        internal_transaction.transaction_hash = json_dict.get('txHash')
         error = json_dict.get('error')
 
         if error:
