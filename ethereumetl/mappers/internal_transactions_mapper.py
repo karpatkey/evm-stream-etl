@@ -56,6 +56,18 @@ class EthInternalTransactionMapper(object):
         
         else: 
             return None
+        
+    def internal_transaction_to_dict(self, internal_transaction):
+        return {
+            
+            'type': 'trace',
+            'block_number': internal_transaction.block_number,
+            'transaction_hash': internal_transaction.transaction_hash,
+            'from_address': internal_transaction.from_address,
+            'to_address': internal_transaction.to_address,
+            'value': internal_transaction.value,
+        }
+
 
     # def geth_trace_to_traces(self, geth_trace):
     #     block_number = geth_trace.block_number
@@ -147,14 +159,4 @@ class EthInternalTransactionMapper(object):
 
     #     return result
 
-    def internal_transaction_to_dict(self, internal_transaction):
-        return {
-            
-            'type': 'trace',
-            'block_number': internal_transaction.block_number,
-            'transaction_hash': internal_transaction.transaction_hash,
-            'from_address': internal_transaction.from_address,
-            'to_address': internal_transaction.to_address,
-            'value': internal_transaction.value,
-        }
 
