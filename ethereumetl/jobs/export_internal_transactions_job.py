@@ -53,7 +53,7 @@ class ExportInternalTransactionsJob(BaseJob):
         
         self.internal_transction_mapper = EthInternalTransactionMapper()
 
-        #TODO Migrate this special case of grnesis and daofork traces: 
+        #TODO Migrate this special case of genesis and daofork traces: 
         self.special_trace_service = EthSpecialTraceService()
         self.include_genesis_traces = include_genesis_traces
         self.include_daofork_traces = include_daofork_traces
@@ -74,6 +74,7 @@ class ExportInternalTransactionsJob(BaseJob):
 
         all_traces = []
 
+        #TODO Migrate this special case of genesis and daofork traces: 
         if self.include_genesis_traces and 0 in block_number_batch:
             genesis_traces = self.special_trace_service.get_genesis_traces()
             all_traces.extend(genesis_traces)
