@@ -185,7 +185,7 @@ class EthStreamerAdapter:
                 item_exporter=exporter
             )
             job.run()
-            traces = exporter.get_items('trace')
+            traces = exporter.get_items('internal_transaction')
             return traces
     
 
