@@ -189,6 +189,7 @@ def enrich_internal_transactions(blocks, internal_transactions):
         internal_transactions, blocks, ('block_number', 'number'),
         [
             'type',
+            'block_number',
             'transaction_hash',
             'from_address',
             'to_address',
