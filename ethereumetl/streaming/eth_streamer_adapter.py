@@ -99,6 +99,9 @@ class EthStreamerAdapter:
             if EntityType.CONTRACT in self.entity_types else []
         enriched_tokens = enrich_tokens(blocks, tokens) \
             if EntityType.TOKEN in self.entity_types else []
+        #TODO enrich internal txs
+        enriched_internal_transactions = internal_transactions \
+            if EntityType.INTERNAL_TRANSACTION in self.entity_types else []
 
         logging.info('Exporting with ' + type(self.item_exporter).__name__)
 
@@ -109,11 +112,13 @@ class EthStreamerAdapter:
             sort_by(enriched_token_transfers, ('block_number', 'log_index')) + \
             sort_by(enriched_traces, ('block_number', 'trace_index')) + \
             sort_by(enriched_contracts, ('block_number',)) + \
-            sort_by(enriched_tokens, ('block_number',))
+            sort_by(enriched_tokens, ('block_number',)) + \
+            sort_by(enriched_internal_transactions, ('block_number',))
+            
+            
 
         self.calculate_item_ids(all_items)
         self.calculate_item_timestamps(all_items)
-
         self.item_exporter.export_items(all_items)
 
     def _export_blocks_and_transactions(self, start_block, end_block):
