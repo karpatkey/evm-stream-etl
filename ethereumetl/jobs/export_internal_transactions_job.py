@@ -106,6 +106,7 @@ class ExportInternalTransactionsJob(BaseJob):
             trace.block_number = block_number
 
         all_traces.extend(traces)
+        calculate_interna_transaction_indexes(all_traces)
 
 
         for trace in all_traces:
