@@ -184,6 +184,28 @@ def enrich_traces(blocks, traces):
 
     return result
 
+def enrich_internal_transactions(blocks, internal_transactions):
+    result = list(join(
+        internal_transactions, blocks, ('block_number', 'number'),
+        [
+            'type',
+            'transaction_hash',
+            'from_address',
+            'to_address',
+            'value',
+            'index'
+     
+        ],
+        [
+            ('timestamp', 'block_timestamp'),
+            ('hash', 'block_hash'),
+        ]))
+
+    if len(result) != len(traces):
+        raise ValueError('The number of traces is wrong ' + str(result))
+
+    return result
+
 
 def enrich_contracts(blocks, contracts):
     result = list(join(

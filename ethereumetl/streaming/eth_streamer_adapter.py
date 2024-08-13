@@ -99,8 +99,7 @@ class EthStreamerAdapter:
             if EntityType.CONTRACT in self.entity_types else []
         enriched_tokens = enrich_tokens(blocks, tokens) \
             if EntityType.TOKEN in self.entity_types else []
-        #TODO enrich internal txs
-        enriched_internal_transactions = internal_transactions \
+        enriched_internal_transactions = enriched_internal_transactions(blocks, internal_transactions) \
             if EntityType.INTERNAL_TRANSACTION in self.entity_types else []
 
         logging.info('Exporting with ' + type(self.item_exporter).__name__)
@@ -191,7 +190,6 @@ class EthStreamerAdapter:
             )
             job.run()
             internal_transaction = exporter.get_items('internal_transaction')
-            print('internal transaction to be exported',internal_transaction)
             return internal_transaction
     
 
