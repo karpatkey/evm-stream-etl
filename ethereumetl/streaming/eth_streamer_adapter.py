@@ -14,8 +14,9 @@ from ethereumetl.jobs.extract_contracts_job import ExtractContractsJob
 from ethereumetl.jobs.extract_token_transfers_job import \
     ExtractTokenTransfersJob
 from ethereumetl.jobs.extract_tokens_job import ExtractTokensJob
-from ethereumetl.streaming.enrich import (enrich_contracts, enrich_logs,
-                                          enrich_token_transfers,
+from ethereumetl.streaming.enrich import (enrich_contracts,
+                                          enrich_internal_transactions,
+                                          enrich_logs, enrich_token_transfers,
                                           enrich_tokens, enrich_traces,
                                           enrich_transactions)
 from ethereumetl.streaming.eth_item_id_calculator import EthItemIdCalculator
@@ -99,7 +100,7 @@ class EthStreamerAdapter:
             if EntityType.CONTRACT in self.entity_types else []
         enriched_tokens = enrich_tokens(blocks, tokens) \
             if EntityType.TOKEN in self.entity_types else []
-        enriched_internal_transactions = enriched_internal_transactions(blocks, internal_transactions) \
+        enriched_internal_transactions = enrich_internal_transactions(blocks, internal_transactions) \
             if EntityType.INTERNAL_TRANSACTION in self.entity_types else []
 
         logging.info('Exporting with ' + type(self.item_exporter).__name__)
