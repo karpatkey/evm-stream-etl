@@ -201,7 +201,7 @@ def enrich_internal_transactions(blocks, internal_transactions):
             ('hash', 'block_hash'),
         ]))
 
-    if len(result) != len(traces):
+    if len(result) != len(internal_transactions):
         raise ValueError('The number of traces is wrong ' + str(result))
 
     return result
