@@ -71,6 +71,7 @@ class GooglePubSubItemExporter:
             future.result()
 
     def export_item(self, item):
+       
         item_type = item.get('type')
         if item_type is not None and item_type in self.item_type_to_topic_mapping:
             topic_path = self.item_type_to_topic_mapping.get(item_type)
@@ -84,7 +85,8 @@ class GooglePubSubItemExporter:
                 message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key,**{"to_address":str(item['to_address']),"from_address":str(item['from_address'])})
             elif item["type"] == 'traces':
                 message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key,**{"to_address":str(item['to_address']),"from_address":str(item['from_address'])})
-            
+            elif item["type"] == 'internal_transactions':
+                message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key,**{"to_address":str(item['to_address']),"from_address":str(item['from_address'])})
             
             else:
                 message_future = self.publisher.publish(topic_path, data=data, ordering_key=ordering_key,**self.get_message_attributes(item))

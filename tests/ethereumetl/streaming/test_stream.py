@@ -23,15 +23,17 @@
 import os
 
 import pytest
-from ethereumetl.streaming.eth_streamer_adapter import EthStreamerAdapter
-from ethereumetl.thread_local_proxy import ThreadLocalProxy
 
 import tests.resources
-from ethereumetl.enumeration.entity_type import EntityType
-from blockchainetl.jobs.exporters.composite_item_exporter import CompositeItemExporter
+from blockchainetl.jobs.exporters.composite_item_exporter import \
+    CompositeItemExporter
 from blockchainetl.streaming.streamer import Streamer
+from ethereumetl.enumeration.entity_type import EntityType
+from ethereumetl.streaming.eth_streamer_adapter import EthStreamerAdapter
+from ethereumetl.thread_local_proxy import ThreadLocalProxy
 from tests.ethereumetl.job.helpers import get_web3_provider
-from tests.helpers import compare_lines_ignore_order, read_file, skip_if_slow_tests_disabled
+from tests.helpers import (compare_lines_ignore_order, read_file,
+                           skip_if_slow_tests_disabled)
 
 RESOURCE_GROUP = 'test_stream'
 
@@ -137,4 +139,10 @@ def test_stream(tmpdir, start_block, end_block, batch_size, resource_group, enti
         print(read_file(tokens_output_file))
         compare_lines_ignore_order(
             read_resource(resource_group, 'expected_tokens.json'), read_file(tokens_output_file)
+        )
+    if 'internal_transaction' in entity_types:
+        print('=====================')
+        print(read_file(tokens_output_file))
+        compare_lines_ignore_order(
+            read_resource(resource_group, 'expected_internal_transactions.json'), read_file(tokens_output_file)
         )

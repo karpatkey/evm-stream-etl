@@ -1,18 +1,27 @@
 import logging
 
-from blockchainetl.jobs.exporters.console_item_exporter import ConsoleItemExporter
-from blockchainetl.jobs.exporters.in_memory_item_exporter import InMemoryItemExporter
+from blockchainetl.jobs.exporters.console_item_exporter import \
+    ConsoleItemExporter
+from blockchainetl.jobs.exporters.in_memory_item_exporter import \
+    InMemoryItemExporter
 from ethereumetl.enumeration.entity_type import EntityType
 from ethereumetl.jobs.export_blocks_job import ExportBlocksJob
+from ethereumetl.jobs.export_internal_transactions_job import \
+    ExportInternalTransactionsJob
 from ethereumetl.jobs.export_receipts_job import ExportReceiptsJob
 from ethereumetl.jobs.export_traces_job import ExportTracesJob
 from ethereumetl.jobs.extract_contracts_job import ExtractContractsJob
-from ethereumetl.jobs.extract_token_transfers_job import ExtractTokenTransfersJob
+from ethereumetl.jobs.extract_token_transfers_job import \
+    ExtractTokenTransfersJob
 from ethereumetl.jobs.extract_tokens_job import ExtractTokensJob
-from ethereumetl.streaming.enrich import enrich_transactions, enrich_logs, enrich_token_transfers, enrich_traces, \
-    enrich_contracts, enrich_tokens
+from ethereumetl.streaming.enrich import (enrich_contracts,
+                                          enrich_internal_transactions,
+                                          enrich_logs, enrich_token_transfers,
+                                          enrich_tokens, enrich_traces,
+                                          enrich_transactions)
 from ethereumetl.streaming.eth_item_id_calculator import EthItemIdCalculator
-from ethereumetl.streaming.eth_item_timestamp_calculator import EthItemTimestampCalculator
+from ethereumetl.streaming.eth_item_timestamp_calculator import \
+    EthItemTimestampCalculator
 from ethereumetl.thread_local_proxy import ThreadLocalProxy
 from ethereumetl.web3_utils import build_web3
 
@@ -61,6 +70,12 @@ class EthStreamerAdapter:
         if self._should_export(EntityType.TRACE):
             traces = self._export_traces(start_block, end_block)
 
+
+        # Export internal transactions
+        internal_transactions = []
+        if self._should_export(EntityType.INTERNAL_TRANSACTION):
+            internal_transactions = self._export_internal_transactions(start_block, end_block)
+
         # Export contracts
         contracts = []
         if self._should_export(EntityType.CONTRACT):
@@ -85,6 +100,8 @@ class EthStreamerAdapter:
             if EntityType.CONTRACT in self.entity_types else []
         enriched_tokens = enrich_tokens(blocks, tokens) \
             if EntityType.TOKEN in self.entity_types else []
+        enriched_internal_transactions = enrich_internal_transactions(blocks, internal_transactions) \
+            if EntityType.INTERNAL_TRANSACTION in self.entity_types else []
 
         logging.info('Exporting with ' + type(self.item_exporter).__name__)
 
@@ -95,11 +112,13 @@ class EthStreamerAdapter:
             sort_by(enriched_token_transfers, ('block_number', 'log_index')) + \
             sort_by(enriched_traces, ('block_number', 'trace_index')) + \
             sort_by(enriched_contracts, ('block_number',)) + \
-            sort_by(enriched_tokens, ('block_number',))
+            sort_by(enriched_tokens, ('block_number',)) + \
+            sort_by(enriched_internal_transactions, ('block_number',))
+            
+            
 
         self.calculate_item_ids(all_items)
         self.calculate_item_timestamps(all_items)
-
         self.item_exporter.export_items(all_items)
 
     def _export_blocks_and_transactions(self, start_block, end_block):
@@ -160,6 +179,21 @@ class EthStreamerAdapter:
         traces = exporter.get_items('trace')
         return traces
 
+    def _export_internal_transactions(self, start_block, end_block):
+            exporter = InMemoryItemExporter(item_types=['internal_transaction'])
+            job = ExportInternalTransactionsJob(
+                start_block=start_block,
+                end_block=end_block,
+                batch_size=self.batch_size,
+                web3=ThreadLocalProxy(lambda: build_web3(self.batch_web3_provider)),
+                max_workers=self.max_workers,
+                item_exporter=exporter
+            )
+            job.run()
+            internal_transaction = exporter.get_items('internal_transaction')
+            return internal_transaction
+    
+
     def _export_contracts(self, traces):
         exporter = InMemoryItemExporter(item_types=['contract'])
         job = ExtractContractsJob(
@@ -208,6 +242,9 @@ class EthStreamerAdapter:
 
         if entity_type == EntityType.TOKEN:
             return EntityType.TOKEN in self.entity_types
+        
+        if entity_type == EntityType.INTERNAL_TRANSACTION:
+            return EntityType.INTERNAL_TRANSACTION in self.entity_types
 
         raise ValueError('Unexpected entity type ' + entity_type)
 
