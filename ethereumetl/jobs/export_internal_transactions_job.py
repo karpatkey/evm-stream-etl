@@ -109,7 +109,6 @@ class ExportInternalTransactionsJob(BaseJob):
 
 
         for trace in all_traces:
-            
             self.item_exporter.export_item(self.internal_transction_mapper.internal_transaction_to_dict(trace))
 
     def _end(self):
