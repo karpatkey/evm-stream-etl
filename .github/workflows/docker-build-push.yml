@@ -1,26 +1,26 @@
 name: Docker Build push
 
-on: 
+on:
   push:
     branches:
       - main
-      - develop
+    tags:
+      - '**' # Trigger on tag
   workflow_dispatch:
 
 env:
   GIT_REF: ${{ github.head_ref || github.ref_name }}
-  DOCKER_REGISTRY: ${{ secrets.DOCKER_URL }}
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_REGISTRY: ${{ secrets.GCP_REG_URL }}
+  DOCKER_USERNAME: ${{ secrets.GCP_REG_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.GCP_REG_PASSWORD }}
+  DOCKER_IMAGE_NAME: ${{ secrets.GCP_REG_URL }}/${{ github.event.repository.name }}
+  DOCKERFILE: './Dockerfile'
 
 jobs:
   docker:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Build and push
-        run: ./.github/scripts/build_and_push.sh
-        env:
-          DOCKER_IMAGE_NAME: "registry.digitalocean.com/karpatkey/evm_stream_etl"
-          DOCKERFILE: "./Dockerfile"
+
+      - name: Build Docker image using composite action
+        uses: karpatkey/build-actions/build-docker-image@main
